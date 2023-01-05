@@ -7,6 +7,7 @@ function PostItem(props) {
     const artist = post.name
     const image = post.image
     const description = post.description
+    
     return (
         <div  className={css.SearchItem}>
             <p>Title: {title}</p>
