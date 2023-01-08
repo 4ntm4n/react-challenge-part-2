@@ -1,42 +1,51 @@
-import React, { Component } from 'react'
+import React, { useState, useEffect } from 'react'
 import { savedPosts } from '../posts.json'
 import css from './css/Content.module.css'
 import Loader from './Loader'
 import PostItem from './PostItem'
 
-class Content extends Component {
-    constructor(props) {
-      super(props)
+
+function Content() {
+    const [loaded, setLoaded] = useState(false)
+    const [fetchedPosts, setFetchedPosts] = useState([])
     
-      this.state = {
-         isLoaded: false,
-      }
+    const handleChange = (event) => {
+        let inputText = event.target.value.toLowerCase();
+        const filteredPosts = savedPosts.filter( posts => posts.name.toLowerCase().includes(inputText));
+        setFetchedPosts(filteredPosts)
     }
 
-    componentDidMount = () => {
+    useEffect( () => {
         setTimeout(() => {
-            this.setState({
-                isLoaded: true
-            })
+            setLoaded(true)
+            setFetchedPosts(savedPosts)
         }, 2000)
-    }
 
-    render() {
-        return (
-            <div>
-                <div className={css.TitleBar}>
-                    <h1>My Photos</h1>
-                </div>
-                <div className={css.SearchResult}>
+    }, [])
+
+    return (
+        <div>
+            <div className={css.TitleBar}>
+                <h1>My Photos</h1>
+                <form>
+                    <label htmlFor="id-search">Search: </label>
+                    <input
+                        id="id-search"
+                        placeholder="By Author"
+                        onChange={handleChange}
+                    />
+                    <h4>posts found: {fetchedPosts.length}</h4>
+                </form>
+            </div>
+            <div className={css.SearchResult}>
                 {
-                    this.state.isLoaded ? (
-                        savedPosts.map((post) => <PostItem key={post.title} post={post} />)
+                    loaded ? (
+                        fetchedPosts.map((post) => <PostItem key={post.title} post={post} />)
                     ) : (<Loader />)
                 }
-                </div>
             </div>
-        )
-    }
+        </div>
+    )
 }
 
-export default Content
+ export default Content
